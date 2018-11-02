@@ -5,5 +5,3 @@ All programming assignments for [Computer Science 535 - Algorithms for Large Dat
 <img src="isu.png" />
 
 Note: these assignments were uploaded publicly to GitHub with the permission of the course's instructor.
-
-<!-- Testing mirroring -->
