@@ -56,7 +56,7 @@ public class Robots {
     boolean doDisallowsApply = false;
     for (String line : lines) {
       // determine if this line is specifying a user-agent and
-      // set soDisallowsApply accordingly
+      // set doDisallowsApply accordingly
       Matcher userAgentMatcher = userAgentPattern.matcher(line);
       while (userAgentMatcher.find()) {
         String userAgent = userAgentMatcher.group(1);
@@ -100,7 +100,7 @@ public class Robots {
   /**
    * Returns all disallowed URLs
    *
-   * @return All disallowesd URLs
+   * @return All disallowed URLs
    */
   public List<String> getAllDisallowedUrls() {
     return this.disallowed;
