@@ -1,4 +1,4 @@
-public class WeightedTuple<T> implements Comparable<WeightedTuple<T>> {
+public class WeightedItem<T> implements Comparable<WeightedItem<T>> {
 
   /** The data item */
   public T item;
@@ -7,12 +7,12 @@ public class WeightedTuple<T> implements Comparable<WeightedTuple<T>> {
   public int weight;
 
   /**
-   * Instantiates a new WeightedTuple
+   * Instantiates a new WeightedItem
    *
    * @param item The data item
    * @param weight The weight of the data item
    */
-  public WeightedTuple(T item, int weight) {
+  public WeightedItem(T item, int weight) {
     this.item = item;
     this.weight = weight;
   }
@@ -32,7 +32,7 @@ public class WeightedTuple<T> implements Comparable<WeightedTuple<T>> {
     if (obj == null) return false;
     if (getClass() != obj.getClass()) return false;
     @SuppressWarnings("unchecked")
-    WeightedTuple<T> other = (WeightedTuple<T>) obj;
+    WeightedItem<T> other = (WeightedItem<T>) obj;
     if (item == null) {
       if (other.item != null) return false;
     } else if (!item.equals(other.item)) return false;
@@ -42,11 +42,11 @@ public class WeightedTuple<T> implements Comparable<WeightedTuple<T>> {
 
   @Override
   public String toString() {
-    return "WeightedTuple [item=" + item + ", weight=" + weight + "]";
+    return "WeightedItem [item=" + item + ", weight=" + weight + "]";
   }
 
   @Override
-  public int compareTo(WeightedTuple<T> other) {
+  public int compareTo(WeightedItem<T> other) {
     return other.weight - this.weight;
   }
 }
