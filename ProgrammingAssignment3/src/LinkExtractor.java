@@ -15,7 +15,7 @@ public class LinkExtractor {
    * @param isTopicSensitive Whether or not this extraction should be topic sensitive
    * @return A list of all relevant links from the provided page
    */
-  public static List<WeightedItem<String>> extractLinks(
+  public List<WeightedItem<String>> extractLinks(
       String url, List<String> keywords, boolean isTopicSensitive) {
     throw new UnsupportedOperationException("Not implemented");
   }

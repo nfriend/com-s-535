@@ -4,7 +4,7 @@ public class WeightedItem<T> implements Comparable<WeightedItem<T>> {
   public T item;
 
   /** The weight of the data item */
-  public int weight;
+  public double weight;
 
   /**
    * Instantiates a new WeightedItem
@@ -12,9 +12,25 @@ public class WeightedItem<T> implements Comparable<WeightedItem<T>> {
    * @param item The data item
    * @param weight The weight of the data item
    */
-  public WeightedItem(T item, int weight) {
+  public WeightedItem(T item, double weight) {
     this.item = item;
     this.weight = weight;
+  }
+
+  @Override
+  public String toString() {
+    return "WeightedItem [item=" + item + ", weight=" + weight + "]";
+  }
+
+  @Override
+  public int compareTo(WeightedItem<T> other) {
+    if (other.weight == this.weight) {
+      return 0;
+    } else if (other.weight > this.weight) {
+      return 1;
+    } else {
+      return -1;
+    }
   }
 
   @Override
@@ -22,7 +38,9 @@ public class WeightedItem<T> implements Comparable<WeightedItem<T>> {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((item == null) ? 0 : item.hashCode());
-    result = prime * result + weight;
+    long temp;
+    temp = Double.doubleToLongBits(weight);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
     return result;
   }
 
@@ -36,17 +54,7 @@ public class WeightedItem<T> implements Comparable<WeightedItem<T>> {
     if (item == null) {
       if (other.item != null) return false;
     } else if (!item.equals(other.item)) return false;
-    if (weight != other.weight) return false;
+    if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight)) return false;
     return true;
-  }
-
-  @Override
-  public String toString() {
-    return "WeightedItem [item=" + item + ", weight=" + weight + "]";
-  }
-
-  @Override
-  public int compareTo(WeightedItem<T> other) {
-    return other.weight - this.weight;
   }
 }
