@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 
 public class LinkExtractorTest {
   @Test
-  void testExtraction() throws IOException {
+  void testSimpleExtraction() throws IOException {
     LinkExtractor extractor = new LinkExtractor();
 
-    String filePath = System.getProperty("user.dir") + "/src/test-html/tennis.html";
+    String filePath = System.getProperty("user.dir") + "/src/test-html/simple.html";
     String testHtml = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
 
     extractor.fetcher = new MockPageFetcher(testHtml);
