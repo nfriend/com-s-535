@@ -89,7 +89,13 @@ public class LinkExtractor {
         Matcher aHrefMatcher = aHrefPattern.matcher(token);
         if (aHrefMatcher.find()) {
           // if this link has an href, record this link.
-          currentLink = new LinkAndRange(aHrefMatcher.group(1));
+          String href = aHrefMatcher.group(1);
+
+          // as stated in the spec, links that contain "#" or ":" must be ignored.
+          // Also, ignore any URLs that begin with //
+          if (!href.contains("#") && !href.contains(":") && !href.startsWith("//")) {
+            currentLink = new LinkAndRange(href);
+          }
         }
       } else if (aLinkEndMatcher.find()) {
         // if current token is an closing <a> tag
@@ -141,7 +147,11 @@ public class LinkExtractor {
       q.add(link.link, getLinkWeight(link, keywordPositions));
     }
 
-    return q.asList();
+    // get the links as a list
+    List<WeightedItem<String>> result = q.asList();
+
+    // remove any links that point back to the original page
+    return result.stream().filter(l -> !l.item.equalsIgnoreCase(url)).collect(Collectors.toList());
   }
 
   private double getLinkWeight(LinkAndRange link, List<Integer> keywordPositions) {

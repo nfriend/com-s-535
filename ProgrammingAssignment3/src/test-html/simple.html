@@ -13,6 +13,15 @@
 		This is a link that should be <a href="/test/link/3.html">picked up because of its </a> proximity to the word <b>wimbledon</b>.
 		<span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
 		This is another <a href="/test/link/4.html">link</a> because the word "french" is nearby.
+		
+		These links should be ignored:
+		<a>A link without an HREF</a>
+		<a href="https://google.com">A non-Wikipedia link</a>
+		<a href="#tennir">An anchor link</a>
+		<a href="/wiki/file:something">A file link</a>
+		<a href="test/url">Links back to itself</a>
+		<a href="//en.wikipedia">Links that start with two slashes</a>
+		
 		<span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
 		<a href="/test/link/5.html">/test/link/5.html</a>
 	</p>

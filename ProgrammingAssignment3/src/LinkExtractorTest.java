@@ -27,7 +27,7 @@ public class LinkExtractorTest {
     keywords.add("US open");
     keywords.add("masters");
 
-    List<WeightedItem<String>> links = extractor.extractLinks("any/url/here", keywords, true);
+    List<WeightedItem<String>> links = extractor.extractLinks("test/Url", keywords, true);
 
     assertEquals(5, links.size());
     assertEquals(new WeightedItem<String>("/test/link/1.html", 1.0), links.get(0));
@@ -56,10 +56,12 @@ public class LinkExtractorTest {
     keywords.add("US open");
     keywords.add("masters");
 
-    List<WeightedItem<String>> links = extractor.extractLinks("any/url/here", keywords, true);
+    List<WeightedItem<String>> links = extractor.extractLinks("/wiki/Tennis", keywords, true);
 
     for (WeightedItem<String> link : links) {
       System.out.println(link);
     }
+
+    // no tests, just using this test for debugging
   }
 }
