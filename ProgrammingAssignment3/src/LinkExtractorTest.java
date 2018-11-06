@@ -29,10 +29,11 @@ public class LinkExtractorTest {
 
     List<WeightedItem<String>> links = extractor.extractLinks("any/url/here", keywords, true);
 
-    assertEquals(3, links.size());
+    assertEquals(5, links.size());
     assertEquals(new WeightedItem<String>("/test/link/1.html", 1.0), links.get(0));
-    assertEquals(new WeightedItem<String>("/test/link/2.html", 0.0), links.get(1));
-    assertEquals(new WeightedItem<String>("/test/link/3.html", 1.0 / (8 + 2)), links.get(2));
-    assertEquals(new WeightedItem<String>("/test/link/4.html", 1.0 / (4 + 2)), links.get(3));
+    assertEquals(new WeightedItem<String>("/test/link/4.html", 1.0 / (4 + 2)), links.get(1));
+    assertEquals(new WeightedItem<String>("/test/link/3.html", 1.0 / (5 + 2)), links.get(2));
+    assertEquals(new WeightedItem<String>("/test/link/2.html", 0.0), links.get(3));
+    assertEquals(new WeightedItem<String>("/test/link/5.html", 0.0), links.get(4));
   }
 }

@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LinkExtractor {
 
@@ -22,14 +23,14 @@ public class LinkExtractor {
   public List<WeightedItem<String>> extractLinks(
       String url, List<String> keywords, boolean isTopicSensitive) throws IOException {
 
-    // the list of links (along with each link's weight) that we will return
-    List<WeightedItem<String>> result = new ArrayList<WeightedItem<String>>();
-
     // get the HTML of the provided URL
     String html = fetcher.fetchPage(url);
 
     // operate on a lowercased version of the HTML
     html = html.toLowerCase();
+
+    // operate only on lowercased keywords
+    keywords = keywords.stream().map(k -> k.toLowerCase()).collect(Collectors.toList());
 
     // for the sake of the assignment, we can assume the content of the document
     // always starts at the first "<p>" element.
@@ -39,15 +40,34 @@ public class LinkExtractor {
     // Matches a starting <a> tag.  Note that this pattern will *not* match an empty
     // <a> tag, i.e. "<a>".  But this is okay because we only care about <a> tags that
     // have href attributes, i.e. "<a href="link/here">.
-    Pattern aLinkPattern = Pattern.compile("^(<a\\s+[^>]*>)", Pattern.CASE_INSENSITIVE);
+    Pattern aLinkStartPattern = Pattern.compile("^(<a\\s+[^>]*>)", Pattern.CASE_INSENSITIVE);
+
+    // Matches the text inside an <a> link's href attribute. For simplicity, only matches href
+    // attributes that use double quotes, not single quotes.
+    Pattern aHrefPattern = Pattern.compile("^<a.*href=\"(.*)\".*>", Pattern.CASE_INSENSITIVE);
+
+    // Matches a closing </a> tag
+    Pattern aLinkEndPattern = Pattern.compile("^(</a>)", Pattern.CASE_INSENSITIVE);
 
     // Matches a word
-    Pattern wordPattern = Pattern.compile("^([a-z0-9-.]+)", Pattern.CASE_INSENSITIVE);
+    Pattern wordPattern = Pattern.compile("^([a-z0-9-_]+)", Pattern.CASE_INSENSITIVE);
 
     // Matches any HTML starting or ending tag, which as well all know
     // you're not supposed to do: https://stackoverflow.com/a/1732454/1063392.
     // But it will do for this simple project.
     Pattern htmlTagPattern = Pattern.compile("^(<[^>]*>)", Pattern.CASE_INSENSITIVE);
+
+    // the current word count
+    int currentPosition = 0;
+
+    // keeps track of the current link, if we are currently scanning tokens inside of an <a> tag
+    LinkAndRange currentLink = null;
+
+    // the positions of all keyword matches in the document
+    ArrayList<Integer> keywordPositions = new ArrayList<Integer>();
+
+    // all links that we find in the document and the word ranges that each includes inside the tag
+    ArrayList<LinkAndRange> links = new ArrayList<LinkAndRange>();
 
     // General approach: walk through the string word by word.  Ignore all HTML tags
     // except for opening <a> tags - for these tags, extract the href attribute and record
@@ -55,17 +75,45 @@ public class LinkExtractor {
     // words are a keyword.  If so, record the position of the word so that we can measure
     // the distance to from these words later.
     while (html.length() > 0) {
-      Matcher aLinkMatcher = aLinkPattern.matcher(html);
+      Matcher aLinkStartMatcher = aLinkStartPattern.matcher(html);
+      Matcher aLinkEndMatcher = aLinkEndPattern.matcher(html);
       Matcher wordMatcher = wordPattern.matcher(html);
       Matcher htmlTagMatcher = htmlTagPattern.matcher(html);
 
       String token;
-      if (aLinkMatcher.find()) {
+      if (aLinkStartMatcher.find()) {
         // if current token is an opening <a> tag
-        token = aLinkMatcher.group(0);
+        token = aLinkStartMatcher.group(1);
+
+        // get this link's href
+        Matcher aHrefMatcher = aHrefPattern.matcher(token);
+        if (aHrefMatcher.find()) {
+          // if this link has an href, record this link.
+          currentLink = new LinkAndRange(aHrefMatcher.group(1));
+        }
+      } else if (aLinkEndMatcher.find()) {
+        // if current token is an closing <a> tag
+        token = aLinkEndMatcher.group(1);
+
+        // add the link object to the list and null out the currentLink pointer
+        links.add(currentLink);
+        currentLink = null;
       } else if (wordMatcher.find()) {
         // if the current token is a plain text word
-        token = wordMatcher.group(0);
+        token = wordMatcher.group(1);
+
+        // if we're inside of an <a> tag, record this position
+        // against the current link
+        if (currentLink != null) {
+          currentLink.addPosition(currentPosition);
+        }
+
+        // this word is a keyword, record its position
+        if (keywords.contains(token)) {
+          keywordPositions.add(currentPosition);
+        }
+
+        currentPosition++;
       } else if (htmlTagMatcher.find()) {
         // if the current token is an HTML start or end tag
         token = htmlTagMatcher.group(0);
@@ -83,6 +131,49 @@ public class LinkExtractor {
       html = html.trim();
     }
 
-    return result;
+    // compute each link's weight and return it.
+    // We'll use the WeightedQ class because it will
+    // automatically replace lighter entries with heavier ones.
+    WeightedQ<String> q = new WeightedQ<String>();
+    for (LinkAndRange link : links) {
+      q.add(link.link, getLinkWeight(link, keywordPositions));
+    }
+
+    return q.asList();
+  }
+
+  private double getLinkWeight(LinkAndRange link, List<Integer> keywordPositions) {
+
+    // if a keyword appears inside the <a></a> tags, the weight is 1.0
+    if (keywordPositions
+        .stream()
+        .anyMatch(p -> link.beginningPosition <= p && link.endPosition >= p)) {
+      return 1.0;
+    }
+
+    // find the distance between the closest keyword token and this link
+    int closestDistance = Integer.MAX_VALUE;
+    for (int p : keywordPositions) {
+
+      int beginningDistance = Math.abs(link.beginningPosition - p);
+      if (beginningDistance < closestDistance) {
+        closestDistance = beginningDistance;
+      }
+
+      int endDistance = Math.abs(link.endPosition - p);
+      if (endDistance < closestDistance) {
+        closestDistance = endDistance;
+      }
+    }
+
+    // distances farther than 17 are considered to have a weight of 0.0,
+    // as specified in the assignment
+    if (closestDistance > 17) {
+      return 0.0;
+    }
+
+    // the closest token was within 18 words of distance from the link.
+    // in this case, compute the weight using the provided formula.
+    return 1.0 / (closestDistance + 2);
   }
 }

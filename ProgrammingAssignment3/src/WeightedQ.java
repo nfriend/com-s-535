@@ -45,7 +45,7 @@ public class WeightedQ<T> {
    * @param item The item to add to the queue
    * @param weight The weight of the item
    */
-  public void add(T item, int weight) {
+  public void add(T item, double weight) {
     add(new WeightedItem<T>(item, weight));
   }
 
@@ -86,5 +86,14 @@ public class WeightedQ<T> {
    */
   public int size() {
     return queue.size();
+  }
+
+  /**
+   * Returns this queue's contents as a List
+   *
+   * @return A list with the queue's contents
+   */
+  public List<WeightedItem<T>> asList() {
+    return new ArrayList<WeightedItem<T>>(queue);
   }
 }
