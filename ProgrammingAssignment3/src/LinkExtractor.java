@@ -44,7 +44,7 @@ public class LinkExtractor {
 
     // Matches the text inside an <a> link's href attribute. For simplicity, only matches href
     // attributes that use double quotes, not single quotes.
-    Pattern aHrefPattern = Pattern.compile("^<a.*href=\"(.*)\".*>", Pattern.CASE_INSENSITIVE);
+    Pattern aHrefPattern = Pattern.compile("^<a.*href=\"([^\"]*)\".*>", Pattern.CASE_INSENSITIVE);
 
     // Matches a closing </a> tag
     Pattern aLinkEndPattern = Pattern.compile("^(</a>)", Pattern.CASE_INSENSITIVE);
@@ -96,8 +96,10 @@ public class LinkExtractor {
         token = aLinkEndMatcher.group(1);
 
         // add the link object to the list and null out the currentLink pointer
-        links.add(currentLink);
-        currentLink = null;
+        if (currentLink != null) {
+          links.add(currentLink);
+          currentLink = null;
+        }
       } else if (wordMatcher.find()) {
         // if the current token is a plain text word
         token = wordMatcher.group(1);

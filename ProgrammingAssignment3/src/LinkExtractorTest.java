@@ -36,4 +36,30 @@ public class LinkExtractorTest {
     assertEquals(new WeightedItem<String>("/test/link/2.html", 0.0), links.get(3));
     assertEquals(new WeightedItem<String>("/test/link/5.html", 0.0), links.get(4));
   }
+
+  @Test
+  void testRealExtraction() throws IOException {
+    LinkExtractor extractor = new LinkExtractor();
+
+    String filePath = System.getProperty("user.dir") + "/src/test-html/tennis.html";
+    String testHtml = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+
+    extractor.fetcher = new MockPageFetcher(testHtml);
+
+    ArrayList<String> keywords = new ArrayList<String>();
+    keywords.add("tennis");
+    keywords.add("grand slam");
+    keywords.add("french");
+    keywords.add("open");
+    keywords.add("australian open");
+    keywords.add("wimbledon");
+    keywords.add("US open");
+    keywords.add("masters");
+
+    List<WeightedItem<String>> links = extractor.extractLinks("any/url/here", keywords, true);
+
+    for (WeightedItem<String> link : links) {
+      System.out.println(link);
+    }
+  }
 }
