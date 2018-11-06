@@ -148,7 +148,7 @@ public class LinkExtractor {
     // automatically replace lighter entries with heavier ones.
     WeightedQ<String> q = new WeightedQ<String>();
     for (LinkAndRange link : links) {
-      q.add(link.link, getLinkWeight(link, keywordPositions, isTopicSensitive));
+      q.add(link.link, getLinkWeight(link, keywords, keywordPositions, isTopicSensitive));
     }
 
     // get the links as a list
@@ -159,7 +159,10 @@ public class LinkExtractor {
   }
 
   private double getLinkWeight(
-      LinkAndRange link, List<Integer> keywordPositions, boolean isTopicSensitive) {
+      LinkAndRange link,
+      List<String> keywords,
+      List<Integer> keywordPositions,
+      boolean isTopicSensitive) {
 
     // non-topic sensitive extractions place all links with a weight of 0.0
     if (!isTopicSensitive) {
@@ -170,6 +173,11 @@ public class LinkExtractor {
     if (keywordPositions
         .stream()
         .anyMatch(p -> link.beginningPosition <= p && link.endPosition >= p)) {
+      return 1.0;
+    }
+
+    // if a keyword appears inside the <a>'s href, the weight is 1.0
+    if (keywords.stream().anyMatch(k -> link.link.toLowerCase().contains(k.toLowerCase()))) {
       return 1.0;
     }
 

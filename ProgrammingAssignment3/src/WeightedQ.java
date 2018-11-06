@@ -88,6 +88,10 @@ public class WeightedQ<T> {
    * @return A list with the queue's contents
    */
   public List<WeightedItem<T>> asList() {
+	  
+    // sort the list from heaviest to lightest
+    Collections.sort(queue);
+
     return new ArrayList<WeightedItem<T>>(queue);
   }
 }

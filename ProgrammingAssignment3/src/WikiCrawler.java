@@ -103,7 +103,7 @@ public class WikiCrawler {
       for (WeightedItem<String> link : links) {
         // add all the links to our queue
         edges.add(new Tuple<String, String>(url, link.item));
-        wq.add(link.item);
+        wq.add(link);
       }
 
       // every 10 requests, pause for 2 seconds to give Wikipedia a break
@@ -129,7 +129,7 @@ public class WikiCrawler {
         out.println(edge.item1 + " " + edge.item2);
       }
 
-      Logger.log("Successfully wrote edges to " + fileName);
+      Logger.log("Successfully wrote all edges to the file!");
     }
   }
 }
