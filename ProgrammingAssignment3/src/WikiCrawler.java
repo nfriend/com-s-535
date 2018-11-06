@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /** A class that crawls Wikipedia */
@@ -71,22 +72,27 @@ public class WikiCrawler {
     // crawl!
     int visitedCount = 0;
     while (wq.size() > 0 && visitedCount < max) {
-      String url = wq.extract().item;
+      WeightedItem<String> weightedUrl = wq.extract();
+      String url = weightedUrl.item;
 
       // skip this URL if we've been there before
       if (visited.contains(url)) {
+        Logger.log("Skipping already visited url " + url);
         continue;
       }
 
       // skip this URL if it's disallowed by robots.txt
       if (bots.isDisallowed(url)) {
+        Logger.log("Skipping disallowed url " + url);
         continue;
       }
 
       // mark this URL as visited
       visited.add(url);
+      visitedCount++;
 
-      Logger.log("Making a request to " + BASE_URL + url);
+      Logger.log("Making request #" + visitedCount + " to " + BASE_URL + url);
+      Logger.log(" - This page had a weight of " + weightedUrl.weight);
 
       // get all the links (and their weights) in this page
       List<WeightedItem<String>> links =
@@ -103,14 +109,27 @@ public class WikiCrawler {
       // every 10 requests, pause for 2 seconds to give Wikipedia a break
       timeoutCounter++;
       if (timeoutCounter == 10) {
+        Logger.log("Pausing for 2 seconds to give Wikipedia a break...");
         Thread.sleep(2000);
         timeoutCounter = 0;
       }
     }
 
+    Logger.log("Done crawling " + visitedCount + " pages");
+
+    Logger.log("Writing " + edges.size() + " edges to " + fileName);
     // write the output to the file
-    for (Tuple<String, String> edge : edges) {
-      System.out.println(edge.item1 + "  --->  " + edge.item2);
+    try (PrintWriter out = new PrintWriter(fileName)) {
+
+      // write the number of vertices in this graph as the first argument
+      out.println(visitedCount);
+
+      // write each edge to the file
+      for (Tuple<String, String> edge : edges) {
+        out.println(edge.item1 + " " + edge.item2);
+      }
+
+      Logger.log("Successfully wrote edges to " + fileName);
     }
   }
 }

@@ -26,16 +26,20 @@ public class LinkExtractor {
     // get the HTML of the provided URL
     String html = fetcher.fetchPage(url);
 
-    // operate on a lowercased version of the HTML
-    html = html.toLowerCase();
-
     // operate only on lowercased keywords
     keywords = keywords.stream().map(k -> k.toLowerCase()).collect(Collectors.toList());
 
     // for the sake of the assignment, we can assume the content of the document
     // always starts at the first "<p>" element.
-    int startIndex = html.indexOf("<p>");
-    html = html.substring(startIndex);
+    Pattern firstPPattern = Pattern.compile("<p>", Pattern.CASE_INSENSITIVE);
+    Matcher firstPMatcher = firstPPattern.matcher(html);
+    if (firstPMatcher.find()) {
+      int startIndex = firstPMatcher.start();
+      html = html.substring(startIndex);
+    } else {
+      throw new IllegalArgumentException(
+          "The HTML found at url " + url + "does not include an opening <p> tag");
+    }
 
     // Matches a starting <a> tag.  Note that this pattern will *not* match an empty
     // <a> tag, i.e. "<a>".  But this is okay because we only care about <a> tags that
@@ -117,7 +121,7 @@ public class LinkExtractor {
         }
 
         // this word is a keyword, record its position
-        if (keywords.contains(token)) {
+        if (keywords.stream().anyMatch(k -> k.equalsIgnoreCase(token))) {
           keywordPositions.add(currentPosition);
         }
 
@@ -144,7 +148,7 @@ public class LinkExtractor {
     // automatically replace lighter entries with heavier ones.
     WeightedQ<String> q = new WeightedQ<String>();
     for (LinkAndRange link : links) {
-      q.add(link.link, getLinkWeight(link, keywordPositions));
+      q.add(link.link, getLinkWeight(link, keywordPositions, isTopicSensitive));
     }
 
     // get the links as a list
@@ -154,7 +158,13 @@ public class LinkExtractor {
     return result.stream().filter(l -> !l.item.equalsIgnoreCase(url)).collect(Collectors.toList());
   }
 
-  private double getLinkWeight(LinkAndRange link, List<Integer> keywordPositions) {
+  private double getLinkWeight(
+      LinkAndRange link, List<Integer> keywordPositions, boolean isTopicSensitive) {
+
+    // non-topic sensitive extractions place all links with a weight of 0.0
+    if (!isTopicSensitive) {
+      return 0.0;
+    }
 
     // if a keyword appears inside the <a></a> tags, the weight is 1.0
     if (keywordPositions

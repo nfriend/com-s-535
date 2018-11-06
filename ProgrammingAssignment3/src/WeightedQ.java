@@ -20,7 +20,7 @@ public class WeightedQ<T> {
 
     if (existingItems.size() == 0) {
       // no weighted item was previously added that contains this T
-      addAndSort(wi);
+      queue.add(wi);
     } else if (existingItems.size() == 1) {
       // a weighted item was previously added that contains this T
       WeightedItem<T> existingItem = existingItems.get(0);
@@ -30,7 +30,7 @@ public class WeightedQ<T> {
       // item with the new
       if (wi.weight > existingItem.weight) {
         queue.remove(existingItem);
-        addAndSort(wi);
+        queue.add(wi);
       }
     } else {
       // we should never be in a situation where we have multiple weighted items that have the
@@ -59,23 +59,17 @@ public class WeightedQ<T> {
   }
 
   /**
-   * Adds an item to the queue and resorts the queue. This method assumes the WeightedItem's T has
-   * already been checked to make sure it's valid to add it to the queue.
-   *
-   * @param wt The WeightedItem<T> to add to the queue
-   */
-  private void addAndSort(WeightedItem<T> wt) {
-    queue.add(wt);
-    Collections.sort(queue);
-  }
-
-  /**
    * Extracts an item from the queue based on the weight and order of addition
    *
    * @return The item with the highest weight, or if multiple elements tie for the highest weight,
    *     the item with the highest weight and the earliest addition to this queue
    */
   public WeightedItem<T> extract() {
+
+    // sort the list from heaviest to lightest
+    Collections.sort(queue);
+
+    // return the heaviest
     return queue.remove(0);
   }
 
