@@ -7,8 +7,9 @@ public class PageRankTest {
   @Test
   void testPageRank() throws IOException {
 
-    String file = "2018-11-07-06-19-45.txt";
+    // String file = "2018-11-07-06-19-45.txt";
+    String file = "simple.txt";
     String filePath = System.getProperty("user.dir") + "/src/test-output/" + file;
-    PageRank pr = new PageRank(filePath, .85, .1);
+    PageRank pr = new PageRank(filePath, .01, .85);
   }
 }

@@ -1,5 +1,4 @@
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.*;
 
 /** A class to compute the page rank of node/pages of a web graph */
@@ -9,10 +8,16 @@ public class PageRank {
   private HashMap<String, NodeInfo<String>> vertices;
 
   /** The web graph matrix */
-  private double[][] M̃;
+  private double[][] O;
 
   /** The number of vertices as specified in the input file */
   private int vertexCount;
+
+  /** The page rank approximation parameter */
+  private double approximation;
+
+  /** The teleportation parameter */
+  private double teleportation;
 
   /**
    * Constructs a new PageRank instance
@@ -24,8 +29,14 @@ public class PageRank {
    */
   public PageRank(String edgeFile, double approximation, double teleportation) throws IOException {
 
+    this.approximation = approximation;
+    this.teleportation = teleportation;
+
     buildVerticesFromFile(edgeFile);
-    buildM̃();
+    buildO();
+
+    System.out.println("O:");
+    System.out.println(Matrix.toString(O));
   }
 
   /**
@@ -152,10 +163,12 @@ public class PageRank {
     }
   }
 
-  /** Builds the web graph (M̃) using the vertices data structure */
-  private void buildM̃() {
+  /** Builds the web graph (O) using the vertices data structure */
+  private void buildO() {
     ArrayList<String> allPages = new ArrayList<String>(vertices.keySet());
-    M̃ = new double[vertexCount][vertexCount];
+    allPages.sort(String::compareTo);
+
+    O = new double[vertexCount][vertexCount];
     for (int i = 0; i < vertexCount; i++) {
       String currentPage = allPages.get(i);
       Set<String> currentLinks = vertices.get(currentPage).outgoingLinks;
@@ -163,11 +176,19 @@ public class PageRank {
       for (int j = 0; j < vertexCount; j++) {
         String linkedPage = allPages.get(j);
         int outDegree = currentLinks.size();
-        if (currentLinks.contains(linkedPage)) {
-          M̃[i][j] = 1.0 / outDegree;
+        if (outDegree == 0) {
+          // avoid sink holes
+          O[i][j] = 1.0 / vertexCount;
         } else {
-          M̃[i][j] = 0.0;
+          if (currentLinks.contains(linkedPage)) {
+            O[i][j] = 1.0 / outDegree;
+          } else {
+            O[i][j] = 0.0;
+          }
         }
+
+        // perform dampening
+        O[i][j] = teleportation * O[i][j] + (1.0 - teleportation) * (1.0 / vertexCount);
       }
     }
   }
