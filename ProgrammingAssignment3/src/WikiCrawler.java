@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /** A class that crawls Wikipedia */
 public class WikiCrawler {
@@ -116,6 +118,9 @@ public class WikiCrawler {
     }
 
     Logger.log("Done crawling " + visitedCount + " pages");
+
+    Logger.log("Removing edges to non-visited vertices");
+    edges = edges.stream().filter(e -> visited.contains(e.item2)).collect(Collectors.toList());
 
     Logger.log("Writing " + edges.size() + " edges to " + fileName);
     // write the output to the file
