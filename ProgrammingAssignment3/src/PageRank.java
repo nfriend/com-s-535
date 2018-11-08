@@ -7,6 +7,9 @@ public class PageRank {
   /** The list of all vertices and all of the incoming and outgoing links to/from each link */
   private HashMap<String, NodeInfo<String>> vertices;
 
+  /** The list of all vertex names in the appropriate order */
+  private List<String> vertexNames;
+
   /** The web graph matrix */
   private double[][] O;
 
@@ -34,9 +37,7 @@ public class PageRank {
 
     buildVerticesFromFile(edgeFile);
     buildO();
-
-    System.out.println("O:");
-    System.out.println(Matrix.toString(O));
+    buildPageRank();
   }
 
   /**
@@ -45,7 +46,7 @@ public class PageRank {
    * @param vertexName The name of the vertex
    * @return The page rank of the vertex
    */
-  public int pageRankOf(String vertexName) {
+  public double pageRankOf(String vertexName) {
     return vertices.get(vertexName).rank;
   }
 
@@ -91,7 +92,7 @@ public class PageRank {
    */
   public String[] topKPageRank(int k) {
     String[] allLinks = vertices.keySet().toArray(new String[vertices.size()]);
-    Arrays.sort(allLinks, Comparator.comparing((String l) -> vertices.get(l).rank));
+    Arrays.sort(allLinks, Comparator.comparing((String l) -> -1 * vertices.get(l).rank));
     return Arrays.copyOfRange(allLinks, 0, k);
   }
 
@@ -161,20 +162,21 @@ public class PageRank {
         vertices.get(page2).incomingLinks.add(page1);
       }
     }
+
+    vertexNames = new ArrayList<String>(vertices.keySet());
+    vertexNames.sort(String::compareTo);
   }
 
   /** Builds the web graph (O) using the vertices data structure */
   private void buildO() {
-    ArrayList<String> allPages = new ArrayList<String>(vertices.keySet());
-    allPages.sort(String::compareTo);
 
     O = new double[vertexCount][vertexCount];
     for (int i = 0; i < vertexCount; i++) {
-      String currentPage = allPages.get(i);
+      String currentPage = vertexNames.get(i);
       Set<String> currentLinks = vertices.get(currentPage).outgoingLinks;
 
       for (int j = 0; j < vertexCount; j++) {
-        String linkedPage = allPages.get(j);
+        String linkedPage = vertexNames.get(j);
         int outDegree = currentLinks.size();
         if (outDegree == 0) {
           // avoid sink holes
@@ -190,6 +192,34 @@ public class PageRank {
         // perform dampening
         O[i][j] = teleportation * O[i][j] + (1.0 - teleportation) * (1.0 / vertexCount);
       }
+    }
+  }
+
+  /** Computes the page rank for each page (vertex) using the web matrix O */
+  private void buildPageRank() {
+    double[] rank = new double[vertexCount];
+
+    // initialize all ranks to 1 to start
+    // TODO: what should this be?
+    for (int i = 0; i < rank.length; i++) {
+      rank[i] = 1.0;
+    }
+
+    // initialize a previousRank vector for tracking purposes
+    double[] previousRank = new double[vertexCount];
+    for (int i = 0; i < previousRank.length; i++) {
+      previousRank[i] = Double.MAX_VALUE;
+    }
+
+    // refine the rank vector until it's close enough
+    while (Vector.norm(Vector.subtract(previousRank, rank)) > approximation) {
+      previousRank = rank;
+      rank = Matrix.multiply(O, rank);
+    }
+
+    // update each NodeInfo with the appropriate rank
+    for (int i = 0; i < vertexNames.size(); i++) {
+      vertices.get(vertexNames.get(i)).rank = rank[i];
     }
   }
 }

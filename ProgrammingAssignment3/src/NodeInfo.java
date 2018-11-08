@@ -7,7 +7,7 @@ public class NodeInfo<T> {
   public T node;
 
   /** The rank of this node */
-  public int rank;
+  public double rank;
 
   /** All outgoing links from this node */
   public Set<T> outgoingLinks = new HashSet<T>();

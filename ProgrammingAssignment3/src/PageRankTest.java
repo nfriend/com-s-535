@@ -7,9 +7,13 @@ public class PageRankTest {
   @Test
   void testPageRank() throws IOException {
 
-    // String file = "2018-11-07-06-19-45.txt";
-    String file = "simple.txt";
+    String file = "2018-11-07-06-19-45.txt";
+    //    String file = "simple.txt";
     String filePath = System.getProperty("user.dir") + "/src/test-output/" + file;
     PageRank pr = new PageRank(filePath, .01, .85);
+
+    String[] topByRank = pr.topKPageRank(100);
+    System.out.println("Top by rank:");
+    System.out.println(String.join(", ", topByRank));
   }
 }
