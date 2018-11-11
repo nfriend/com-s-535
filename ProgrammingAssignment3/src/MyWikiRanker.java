@@ -57,21 +57,19 @@ public class MyWikiRanker {
     String filePath = System.getProperty("user.dir") + "/src/output/2018-11-10-11-32-51.txt";
 
     PageRankString ranker = new PageRankString(filePath, 0.01, 0.85);
-    int k = 10;
+    int k = 20;
 
     System.out.println("A: Top " + k + " links based on outdegree:");
-    String[] top = ranker.topKOutDegree(k);
-    for (int i = 0; i < top.length; i++) {
-      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
+    String[] a = ranker.topKOutDegree(k);
+    for (int i = 0; i < a.length; i++) {
+      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), a[i]));
     }
     System.out.println();
-    System.out.println("   Jaccard Similarity between all pairs in the list above:");
-    System.out.println(Jaccard.toString(Arrays.asList(top), "     -  "));
 
     System.out.println("B: Top " + k + " links based on indegree:");
-    top = ranker.topKInDegree(k);
-    for (int i = 0; i < top.length; i++) {
-      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
+    String[] b = ranker.topKInDegree(k);
+    for (int i = 0; i < b.length; i++) {
+      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), b[i]));
     }
     System.out.println();
 
@@ -79,9 +77,9 @@ public class MyWikiRanker {
         "C: Top "
             + k
             + " links based on page rank with approximation = 0.01 and teleporation = 0.85:");
-    top = ranker.topKPageRank(k);
-    for (int i = 0; i < top.length; i++) {
-      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
+    String[] c = ranker.topKPageRank(k);
+    for (int i = 0; i < c.length; i++) {
+      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), c[i]));
     }
     System.out.println();
 
@@ -90,9 +88,9 @@ public class MyWikiRanker {
             + k
             + " links based on page rank with approximation = 0.005 and teleporation = 0.85:");
     ranker = new PageRankString(filePath, 0.005, 0.85);
-    top = ranker.topKPageRank(k);
-    for (int i = 0; i < top.length; i++) {
-      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
+    String[] d = ranker.topKPageRank(k);
+    for (int i = 0; i < d.length; i++) {
+      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), d[i]));
     }
     System.out.println();
 
@@ -101,10 +99,23 @@ public class MyWikiRanker {
             + k
             + " links based on page rank with approximation = 0.001 and teleporation = 0.85:");
     ranker = new PageRankString(filePath, 0.001, 0.85);
-    top = ranker.topKPageRank(k);
-    for (int i = 0; i < top.length; i++) {
-      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
+    String[] e = ranker.topKPageRank(k);
+    for (int i = 0; i < e.length; i++) {
+      System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), e[i]));
     }
     System.out.println();
+
+    String[] letters = new String[] {"A", "B", "C", "D", "E"};
+    String[][] lists = new String[][] {a, b, c, d, e};
+
+    for (int i = 0; i < lists.length; i++) {
+      for (int j = i + 1; j < lists.length; j++) {
+        double jaccard = Jaccard.calculate(lists[i], lists[j]);
+        System.out.println(
+            String.format(
+                "Exact Jaccard similarity between lists %s and %s: %.4f",
+                letters[i], letters[j], jaccard));
+      }
+    }
   }
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 public class PageRankStringTest {
 
   @Test
-  void testPageRankBase() throws IOException {
+  void testPageRanString() throws IOException {
 
     String file = "2018-11-07-06-19-45.txt";
     //    String file = "simple.txt";

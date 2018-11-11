@@ -27,7 +27,7 @@ public class PageRankString {
   private double teleportation;
 
   /**
-   * Constructs a new PageRankBase instance
+   * Constructs a new PageRankString instance
    *
    * @param edgeFile The file containing all of the edges
    * @param approximation The page rank approximation parameter
