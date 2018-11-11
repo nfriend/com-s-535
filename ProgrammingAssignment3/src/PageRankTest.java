@@ -1,19 +1,27 @@
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
 public class PageRankTest {
-
   @Test
   void testPageRank() throws IOException {
 
-    String file = "2018-11-07-06-19-45.txt";
-    //    String file = "simple.txt";
+    String file = "simple.txt";
     String filePath = System.getProperty("user.dir") + "/src/test-output/" + file;
     PageRank pr = new PageRank(filePath, .01, .85);
 
-    String[] topByRank = pr.topKPageRank(100);
     System.out.println("Top by rank:");
-    System.out.println(String.join(", ", topByRank));
+    System.out.println(Arrays.toString(pr.topKPageRank(4)));
+    System.out.println("Top by in degree:");
+    System.out.println(Arrays.toString(pr.topKInDegree(4)));
+    System.out.println("Top by out degree:");
+    System.out.println(Arrays.toString(pr.topKOutDegree(4)));
+    System.out.println("Page rank of vertex 2:");
+    System.out.println(pr.pageRankOf(2));
+    System.out.println("In degree of vertex 2:");
+    System.out.println(pr.inDegreeOf(2));
+    System.out.println("Out degree of vertex 2:");
+    System.out.println(pr.outDegreeOf(2));
   }
 }

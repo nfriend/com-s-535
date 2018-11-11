@@ -56,7 +56,7 @@ public class MyWikiRanker {
 
     String filePath = System.getProperty("user.dir") + "/src/output/2018-11-10-11-32-51.txt";
 
-    PageRank ranker = new PageRank(filePath, 0.01, 0.85);
+    PageRankString ranker = new PageRankString(filePath, 0.01, 0.85);
     int k = 10;
 
     System.out.println("A: Top " + k + " links based on outdegree:");
@@ -89,7 +89,7 @@ public class MyWikiRanker {
         "D: Top "
             + k
             + " links based on page rank with approximation = 0.005 and teleporation = 0.85:");
-    ranker = new PageRank(filePath, 0.005, 0.85);
+    ranker = new PageRankString(filePath, 0.005, 0.85);
     top = ranker.topKPageRank(k);
     for (int i = 0; i < top.length; i++) {
       System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
@@ -100,7 +100,7 @@ public class MyWikiRanker {
         "E: Top "
             + k
             + " links based on page rank with approximation = 0.001 and teleporation = 0.85:");
-    ranker = new PageRank(filePath, 0.001, 0.85);
+    ranker = new PageRankString(filePath, 0.001, 0.85);
     top = ranker.topKPageRank(k);
     for (int i = 0; i < top.length; i++) {
       System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), top[i]));
