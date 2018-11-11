@@ -2,7 +2,7 @@
 public class Logger {
 
   /** Whether or not logging is enabled */
-  public static boolean isLoggingEnabled = true;
+  public static boolean isLoggingEnabled = false;
 
   /**
    * Logs a message the console if logging is enabled

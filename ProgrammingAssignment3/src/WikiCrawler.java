@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /** A class that crawls Wikipedia */
