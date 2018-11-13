@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+/** A type that is responsible for returning the HTML as a String from a URL */
 public interface IPageFetcher {
 
   /**

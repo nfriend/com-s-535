@@ -13,48 +13,46 @@ public class MyWikiRanker {
    * @throws IOException
    */
   public static void main(String[] args) throws IOException, InterruptedException {
-    //    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-    //    String fileName = format.format(new Date()) + ".txt";
-    //    String filePath = System.getProperty("user.dir") + "/src/output/" + fileName;
-    //
-    //    // my topic information
-    //    String seedUrl = "/wiki/Cello";
-    //    String[] keywords =
-    //        new String[] {
-    //          "cello",
-    //          "bow",
-    //          "neck",
-    //          "fingerboard",
-    //          "pegbox",
-    //          "scroll",
-    //          "pegs",
-    //          "endpin",
-    //          "f-holes",
-    //          "f-hole",
-    //          "pizzicato",
-    //          "vibrato",
-    //          "thumb",
-    //          "string",
-    //          "strings",
-    //          "rosin",
-    //          "orchestra",
-    //          "symphony",
-    //          "Stradivarius",
-    //          "Stradivari",
-    //          "Yo-Yo",
-    //          "Rostropovich",
-    //          "Casals",
-    //          "Maisky",
-    //          "Isserlis",
-    //          "Starker",
-    //          "violoncello"
-    //        };
-    //
-    //    // Generate the web graph by crawling Wikipedia
-    //    WikiCrawler crawler = new WikiCrawler(seedUrl, keywords, 500, filePath, true);
-    //    crawler.crawl();
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    String fileName = format.format(new Date()) + ".txt";
+    String filePath = System.getProperty("user.dir") + "/src/output/" + fileName;
 
-    String filePath = System.getProperty("user.dir") + "/src/output/2018-11-10-11-32-51.txt";
+    // my topic information
+    String seedUrl = "/wiki/Cello";
+    String[] keywords =
+        new String[] {
+          "cello",
+          "bow",
+          "neck",
+          "fingerboard",
+          "pegbox",
+          "scroll",
+          "pegs",
+          "endpin",
+          "f-holes",
+          "f-hole",
+          "pizzicato",
+          "vibrato",
+          "thumb",
+          "string",
+          "strings",
+          "rosin",
+          "orchestra",
+          "symphony",
+          "Stradivarius",
+          "Stradivari",
+          "Yo-Yo",
+          "Rostropovich",
+          "Casals",
+          "Maisky",
+          "Isserlis",
+          "Starker",
+          "violoncello"
+        };
+
+    // Generate the web graph by crawling Wikipedia
+    WikiCrawler crawler = new WikiCrawler(seedUrl, keywords, 500, filePath, true);
+    crawler.crawl();
 
     PageRankString ranker = new PageRankString(filePath, 0.01, 0.85);
     int k = 20;
@@ -76,7 +74,7 @@ public class MyWikiRanker {
     System.out.println(
         "C: Top "
             + k
-            + " links based on page rank with approximation = 0.01 and teleporation = 0.85:");
+            + " links based on page rank with approximation = 0.01 and teleportation = 0.85:");
     String[] c = ranker.topKPageRank(k);
     for (int i = 0; i < c.length; i++) {
       System.out.println(String.format("    %2s. %s", Integer.toString(i + 1), c[i]));
@@ -86,7 +84,7 @@ public class MyWikiRanker {
     System.out.println(
         "D: Top "
             + k
-            + " links based on page rank with approximation = 0.005 and teleporation = 0.85:");
+            + " links based on page rank with approximation = 0.005 and teleportation = 0.85:");
     ranker = new PageRankString(filePath, 0.005, 0.85);
     String[] d = ranker.topKPageRank(k);
     for (int i = 0; i < d.length; i++) {
@@ -97,7 +95,7 @@ public class MyWikiRanker {
     System.out.println(
         "E: Top "
             + k
-            + " links based on page rank with approximation = 0.001 and teleporation = 0.85:");
+            + " links based on page rank with approximation = 0.001 and teleportation = 0.85:");
     ranker = new PageRankString(filePath, 0.001, 0.85);
     String[] e = ranker.topKPageRank(k);
     for (int i = 0; i < e.length; i++) {

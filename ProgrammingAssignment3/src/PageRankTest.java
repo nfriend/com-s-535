@@ -17,11 +17,8 @@ public class PageRankTest {
     System.out.println(Arrays.toString(pr.topKInDegree(4)));
     System.out.println("Top by out degree:");
     System.out.println(Arrays.toString(pr.topKOutDegree(4)));
-    System.out.println("Page rank of vertex 2:");
-    System.out.println(pr.pageRankOf(2));
-    System.out.println("In degree of vertex 2:");
-    System.out.println(pr.inDegreeOf(2));
-    System.out.println("Out degree of vertex 2:");
-    System.out.println(pr.outDegreeOf(2));
+    System.out.println("Page rank of vertex 2: " + pr.inDegreeOf(2));
+    System.out.println("In degree of vertex 2: " + pr.inDegreeOf(2));
+    System.out.println("Out degree of vertex 2: " + pr.outDegreeOf(2));
   }
 }

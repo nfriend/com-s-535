@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/** A class that manages the extraction of links from a URL */
 public class LinkExtractor {
 
   /** The class responsible for returning the webpage as an HTML string */

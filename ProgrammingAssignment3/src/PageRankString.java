@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * A class to compute the page rank of node/pages of a web graph. Due to the specification of the
  * assignment, this class deals with the web graph as Strings. The real PageRank class simply
- * proxies the methods exposed here and translated the results into the appropriate types.
+ * proxies the methods exposed here and translates the results into the appropriate types.
  */
 public class PageRankString {
 
@@ -40,8 +40,13 @@ public class PageRankString {
     this.approximation = approximation;
     this.teleportation = teleportation;
 
+    Logger.log("Reading the edges from " + edgeFile);
     buildVerticesFromFile(edgeFile);
+
+    Logger.log("Building the web matrix O");
     buildO();
+
+    Logger.log("Computing page rank");
     buildPageRank();
   }
 
@@ -216,11 +221,19 @@ public class PageRankString {
       previousRank[i] = Double.MAX_VALUE;
     }
 
+    int loopCount = 0;
+
     // refine the rank vector until it's close enough
     while (Vector.norm(Vector.subtract(previousRank, rank)) > approximation) {
+      loopCount++;
       previousRank = rank;
       rank = Matrix.multiply(O, rank);
     }
+
+    Logger.log(
+        String.format(
+            "Building the page rank required %d iterations to achieve approximation of %.4f with teleportation = %.4f",
+            loopCount, approximation, teleportation));
 
     // update each NodeInfo with the appropriate rank
     for (int i = 0; i < vertexNames.size(); i++) {
