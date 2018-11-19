@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.*;
+
 public class PositionalIndex {
 
   /**
@@ -5,7 +8,23 @@ public class PositionalIndex {
    *
    * @param rootFolder The folder containing the documents to index
    */
-  public PositionalIndex(String rootFolder) {}
+  public PositionalIndex(String rootFolder) {
+    File[] files = new File(rootFolder).listFiles();
+
+    // handle the case where the rootFolder parameter is invalid
+    if (files == null) {
+      throw new IllegalArgumentException(
+          "The directory path provided, \"" + rootFolder + "\", is not a directory");
+    }
+
+    // process the files in parallel
+    Arrays.asList(files)
+        .parallelStream()
+        .forEach(
+            file -> {
+              Logger.log("Indexing file: " + file.getAbsolutePath());
+            });
+  }
 
   /**
    * Returns the number of times term appears in doc.
