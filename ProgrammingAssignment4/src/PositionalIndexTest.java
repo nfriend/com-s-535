@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test;
 public class PositionalIndexTest {
   @Test
   void testPositionalIndex() {
-    String rootFolder = System.getProperty("user.dir") + "/src/test-input";
+    // String rootFolder = System.getProperty("user.dir") + "/src/test-input";
+    String rootFolder = "C:\\Users\\Nathan\\Downloads\\IR";
     PositionalIndex pi = new PositionalIndex(rootFolder);
+
+    System.out.println(pi.postingsList("quick"));
   }
 }

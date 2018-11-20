@@ -1,7 +1,11 @@
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PositionalIndex {
+
+  /** The inverted index */
+  private HashMap<String, List<Posting>> index = new HashMap<String, List<Posting>>();
 
   /**
    * Creates a new PositionalIndex instance
@@ -18,12 +22,45 @@ public class PositionalIndex {
     }
 
     // process the files in parallel
+    Date start = new Date();
     Arrays.asList(files)
         .parallelStream()
         .forEach(
             file -> {
-              Logger.log("Indexing file: " + file.getAbsolutePath());
+              Logger.log("Indexing file " + file.getName());
+
+              // read all of the lines of the file
+              List<String> lines = new ArrayList<String>();
+              try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                  lines.add(line);
+                }
+              } catch (IOException e) {
+                System.out.println("Error while reading file " + file.getAbsolutePath());
+                e.printStackTrace();
+              }
+
+              // extract the terms and their positions from the file's lines
+              HashMap<String, List<Integer>> terms = TermExtractor.extract(lines);
+
+              // add the terms and their positions to our index
+              terms
+                  .keySet()
+                  .forEach(
+                      term -> {
+                        synchronized (index) {
+                          if (!index.containsKey(term)) {
+                            index.put(term, new ArrayList<Posting>());
+                          }
+
+                          index.get(term).add(new Posting(file.getName(), terms.get(term)));
+                        }
+                      });
             });
+
+    Date end = new Date();
+    Logger.log("Done indexing after " + ((end.getTime() - start.getTime()) / 1000) + " seconds");
   }
 
   /**
@@ -48,12 +85,18 @@ public class PositionalIndex {
   }
 
   /**
-   * Returns the string representation of <tt>postings(t)</tt>.
+   * Returns the string representation of <tt>postings(t)</tt>, in the format specified in the
+   * assignment
    *
    * @param t The term
+   * @return The string representation
    */
-  public void postingsList(String t) {
-    throw new UnsupportedOperationException("Not implemented");
+  public String postingsList(String t) {
+
+    return "["
+        + String.join(
+            ",", index.get(t).stream().map(p -> p.toString()).collect(Collectors.toList()))
+        + "]";
   }
 
   /**
