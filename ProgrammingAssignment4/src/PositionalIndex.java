@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 public class PositionalIndex {
 
   /** The inverted index */
-  private HashMap<String, List<Posting>> index = new HashMap<String, List<Posting>>();
+  private Map<String, Map<String, List<Integer>>> index = new HashMap<>();
 
   /**
    * Creates a new PositionalIndex instance
@@ -51,10 +51,10 @@ public class PositionalIndex {
                       term -> {
                         synchronized (index) {
                           if (!index.containsKey(term)) {
-                            index.put(term, new ArrayList<Posting>());
+                            index.put(term, new HashMap<>());
                           }
 
-                          index.get(term).add(new Posting(file.getName(), terms.get(term)));
+                          index.get(term).put(file.getName(), terms.get(term));
                         }
                       });
             });
@@ -93,10 +93,20 @@ public class PositionalIndex {
    */
   public String postingsList(String t) {
 
-    return "["
-        + String.join(
-            ",", index.get(t).stream().map(p -> p.toString()).collect(Collectors.toList()))
-        + "]";
+    Map<String, List<Integer>> docs = index.get(t);
+
+    List<String> postings = new ArrayList<>();
+    for (String doc : docs.keySet()) {
+      postings.add(
+          String.format(
+              "<%s:%s>",
+              doc,
+              String.join(
+                  ",",
+                  docs.get(doc).stream().map(i -> i.toString()).collect(Collectors.toList()))));
+    }
+
+    return "[" + String.join(",", postings) + "]";
   }
 
   /**
