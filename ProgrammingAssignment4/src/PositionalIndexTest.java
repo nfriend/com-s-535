@@ -13,5 +13,7 @@ public class PositionalIndexTest {
     PositionalIndex pi = new PositionalIndex(rootFolder);
 
     System.out.println(pi.postingsList("quickly"));
+    System.out.println(pi.termFrequency("quickly", "Fielding_(cricket).txt"));
+    System.out.println(pi.termFrequency("the", "Fielding_(cricket).txt"));
   }
 }

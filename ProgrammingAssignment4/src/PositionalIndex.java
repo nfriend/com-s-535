@@ -71,7 +71,16 @@ public class PositionalIndex {
    * @return The number of times term appears in doc
    */
   public int termFrequency(String term, String doc) {
-    throw new UnsupportedOperationException("Not implemented");
+    if (!index.containsKey(term)) {
+      return 0;
+    }
+
+    Map<String, List<Integer>> postings = index.get(term);
+    if (!postings.containsKey(doc)) {
+      return 0;
+    } else {
+      return postings.get(doc).size();
+    }
   }
 
   /**
