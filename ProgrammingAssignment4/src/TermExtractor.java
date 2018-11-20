@@ -39,6 +39,16 @@ public class TermExtractor {
     return terms;
   }
 
+  /**
+   * Convenience method to call <tt>extract()</tt> with a single string instead of a List
+   *
+   * @param line The line to extract terms from
+   * @return The list of terms and their positions
+   */
+  public static HashMap<String, List<Integer>> extract(String line) {
+    return extract(Arrays.asList(line));
+  }
+
   /** A pattern that matches all characters that should be removed */
   private static String charactersToRemove = "[.,”“?\\[\\]'{}:;()]";
 

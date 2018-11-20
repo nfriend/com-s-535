@@ -137,11 +137,30 @@ public class PositionalIndex {
    * Returns <tt>TPScore(query, doc)</tt>.
    *
    * @param query The user's search query
-   * @param doc THe document to test
+   * @param doc The document to test
    * @return The TPScore of the query with respect to the document
    */
   public double TPScore(String query, String doc) {
-    throw new UnsupportedOperationException("Not implemented");
+    HashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
+
+    List<List<Integer>> positions = new ArrayList<>();
+    queryTerms
+        .keySet()
+        .forEach(
+            term -> {
+              if (!index.containsKey(term)) {
+                positions.add(new ArrayList<>());
+              } else {
+                Map<String, List<Integer>> postings = this.index.get(term);
+                if (!postings.containsKey(doc)) {
+                  positions.add(new ArrayList<>());
+                } else {
+                  positions.add(postings.get(doc));
+                }
+              }
+            });
+
+    return TPScore.compute(positions);
   }
 
   /**
