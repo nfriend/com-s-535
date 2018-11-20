@@ -90,7 +90,11 @@ public class PositionalIndex {
    * @return The number of documents
    */
   public int docFrequency(String term) {
-    throw new UnsupportedOperationException("Not implemented");
+    if (!index.containsKey(term)) {
+      return 0;
+    }
+
+    return index.get(term).size();
   }
 
   /**
