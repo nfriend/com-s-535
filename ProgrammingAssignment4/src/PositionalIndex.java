@@ -7,6 +7,12 @@ public class PositionalIndex {
   /** The inverted index */
   private Map<String, Map<String, List<Integer>>> index = new HashMap<>();
 
+  /** The vector-space model */
+  private Map<String, double[]> docVectors = new HashMap<>();
+
+  /** The set of all terms in all documents */
+  private List<String> allTerms = new ArrayList<>();
+
   /**
    * Creates a new PositionalIndex instance
    *
@@ -49,7 +55,7 @@ public class PositionalIndex {
                   .keySet()
                   .forEach(
                       term -> {
-                        synchronized (index) {
+                        synchronized (this) {
                           if (!index.containsKey(term)) {
                             index.put(term, new HashMap<>());
                           }
@@ -57,10 +63,41 @@ public class PositionalIndex {
                           index.get(term).put(file.getName(), terms.get(term));
                         }
                       });
+
+              // put a placeholder in the doc vectors map for now so that
+              // we can iterate over the list of files later
+              docVectors.put(file.getName(), null);
+            });
+
+    // save the list of terms, sorted in the order we want
+    allTerms = new ArrayList<>(index.keySet());
+    allTerms.sort(String::compareTo);
+
+    // compute the vector space model
+    Logger.log("Computing the vector space model");
+
+    docVectors
+        .keySet()
+        .forEach(
+            doc -> {
+
+              // build the map of terms that appear in the current document (and their positions)
+              HashMap<String, List<Integer>> docTerms = new HashMap<>();
+              index
+                  .keySet()
+                  .forEach(
+                      term -> {
+                        if (index.get(term).containsKey(doc)) {
+                          docTerms.put(doc, index.get(term).get(doc));
+                        }
+                      });
+
+              docVectors.put(doc, VSMScore.getVector(index, allTerms, docTerms, docVectors.size()));
             });
 
     Date end = new Date();
-    Logger.log("Done indexing after " + ((end.getTime() - start.getTime()) / 1000) + " seconds");
+    Logger.log(
+        "Done preprocessing after " + ((end.getTime() - start.getTime()) / 1000) + " seconds");
   }
 
   /**
@@ -130,7 +167,17 @@ public class PositionalIndex {
    * @return The weight of t
    */
   public double weight(String t, String d) {
-    throw new UnsupportedOperationException("Not implemented");
+    int termIndex = allTerms.indexOf(t);
+
+    if (termIndex == -1) {
+      return 0;
+    }
+
+    if (!docVectors.containsKey(d)) {
+      throw new IllegalArgumentException("Document \"" + d + "\" does not exist in the index");
+    }
+
+    return docVectors.get(d)[termIndex];
   }
 
   /**
@@ -175,13 +222,13 @@ public class PositionalIndex {
   }
 
   /**
-   * Returns <tt>0.6×T SScore(query, doc)+0.4×V SScore(query, doc)</tt>.
+   * Returns <tt>0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc)</tt>.
    *
    * @param query The user's search query
    * @param doc The document to test
    * @return The relevance of the document with respect to the query
    */
   public double Relevance(String query, String doc) {
-    throw new UnsupportedOperationException("Not implemented");
+    return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
   }
 }
