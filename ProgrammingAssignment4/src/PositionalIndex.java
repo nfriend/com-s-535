@@ -88,7 +88,7 @@ public class PositionalIndex {
                   .forEach(
                       term -> {
                         if (index.get(term).containsKey(doc)) {
-                          docTerms.put(doc, index.get(term).get(doc));
+                          docTerms.put(term, index.get(term).get(doc));
                         }
                       });
 
@@ -218,7 +218,16 @@ public class PositionalIndex {
    * @return The VSScode of the query with respect to the document
    */
   public double VSScore(String query, String doc) {
-    throw new UnsupportedOperationException("Not implemented");
+
+    if (!docVectors.containsKey(doc)) {
+      return 0;
+    }
+
+    HashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
+    double[] queryVector = VSMScore.getVector(index, allTerms, queryTerms, docVectors.size());
+    double[] docVector = docVectors.get(doc);
+
+    return VSMScore.cosSim(queryVector, docVector);
   }
 
   /**

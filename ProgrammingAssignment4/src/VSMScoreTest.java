@@ -59,4 +59,15 @@ public class VSMScoreTest {
     expected = new double[] {0, 0, 0.674751, 0};
     assertArrayEquals(expected, actual, 0.00001);
   }
+
+  @Test
+  void testCosSim() {
+    double[] vector1 = new double[] {1, 2, 3};
+    double[] vector2 = new double[] {4, 5, 6};
+
+    double expected = 0.974631;
+    double actual = VSMScore.cosSim(vector1, vector2);
+
+    assertEquals(expected, actual, 0.00001);
+  }
 }

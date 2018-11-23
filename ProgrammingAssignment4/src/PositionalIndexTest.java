@@ -14,9 +14,9 @@ public class PositionalIndexTest {
 
     System.out.println(pi.postingsList("quick"));
     System.out.println(pi.postingsList("fox"));
-    System.out.println(pi.TPScore("Quick Fox", "example1.txt"));
-    System.out.println(pi.TPScore("Quick Fox", "example2.txt"));
-    System.out.println(pi.TPScore("Quick Fox", "example3.txt"));
-    System.out.println(pi.TPScore("Quick Fox", "example4.txt"));
+    System.out.println(pi.VSScore("Quick Fox", "example1.txt"));
+    System.out.println(pi.VSScore("Quick Fox", "example2.txt"));
+    System.out.println(pi.VSScore("Quick Fox", "example3.txt"));
+    System.out.println(pi.VSScore("Quick Fox", "notreal.txt"));
   }
 }
