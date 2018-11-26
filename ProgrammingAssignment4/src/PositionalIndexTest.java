@@ -12,11 +12,21 @@ public class PositionalIndexTest {
     //    String rootFolder = "C:\\Users\\Nathan\\Downloads\\IR";
     PositionalIndex pi = new PositionalIndex(rootFolder);
 
-    System.out.println(pi.postingsList("quick"));
-    System.out.println(pi.postingsList("fox"));
-    System.out.println(pi.VSScore("Quick Fox", "example1.txt"));
-    System.out.println(pi.VSScore("Quick Fox", "example2.txt"));
-    System.out.println(pi.VSScore("Quick Fox", "example3.txt"));
-    System.out.println(pi.VSScore("Quick Fox", "notreal.txt"));
+    List<String> queries =
+        Arrays.asList(
+            "quick fox",
+            "fox quick",
+            "fox",
+            "quick",
+            "blue",
+            "black",
+            "blue black",
+            "black blue",
+            "blue brown");
+
+    for (String query : queries) {
+      System.out.println(
+          "Score for query \"" + query + "\": " + pi.Relevance(query, "example1.txt"));
+    }
   }
 }

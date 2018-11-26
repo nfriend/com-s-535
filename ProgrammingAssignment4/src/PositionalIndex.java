@@ -48,7 +48,7 @@ public class PositionalIndex {
               }
 
               // extract the terms and their positions from the file's lines
-              HashMap<String, List<Integer>> terms = TermExtractor.extract(lines);
+              LinkedHashMap<String, List<Integer>> terms = TermExtractor.extract(lines);
 
               // add the terms and their positions to our index
               terms
@@ -83,14 +83,12 @@ public class PositionalIndex {
 
               // build the map of terms that appear in the current document (and their positions)
               HashMap<String, List<Integer>> docTerms = new HashMap<>();
-              index
-                  .keySet()
-                  .forEach(
-                      term -> {
-                        if (index.get(term).containsKey(doc)) {
-                          docTerms.put(term, index.get(term).get(doc));
-                        }
-                      });
+              allTerms.forEach(
+                  term -> {
+                    if (index.get(term).containsKey(doc)) {
+                      docTerms.put(term, index.get(term).get(doc));
+                    }
+                  });
 
               docVectors.put(doc, VSMScore.getVector(index, allTerms, docTerms, docVectors.size()));
             });
@@ -188,7 +186,7 @@ public class PositionalIndex {
    * @return The TPScore of the query with respect to the document
    */
   public double TPScore(String query, String doc) {
-    HashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
+    LinkedHashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
 
     List<List<Integer>> positions = new ArrayList<>();
     queryTerms
@@ -223,7 +221,7 @@ public class PositionalIndex {
       return 0;
     }
 
-    HashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
+    LinkedHashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
     double[] queryVector = VSMScore.getVector(index, allTerms, queryTerms, docVectors.size());
     double[] docVector = docVectors.get(doc);
 

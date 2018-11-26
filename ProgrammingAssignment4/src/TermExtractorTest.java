@@ -10,24 +10,24 @@ public class TermExtractorTest {
     HashMap<String, List<String>> inputOutputs = new HashMap<>();
 
     inputOutputs.put("The quick brown fox", Arrays.asList("the", "quick", "brown", "fox"));
-    inputOutputs.put("12.23 4,567.89", Arrays.asList("12.23", "4,567.89"));
-    inputOutputs.put("the.", Arrays.asList("the"));
-    inputOutputs.put("the,", Arrays.asList("the"));
-    inputOutputs.put("the”", Arrays.asList("the"));
-    inputOutputs.put("the“", Arrays.asList("the"));
-    inputOutputs.put("the?", Arrays.asList("the"));
-    inputOutputs.put("the[", Arrays.asList("the"));
-    inputOutputs.put("the]", Arrays.asList("the"));
-    inputOutputs.put("the'", Arrays.asList("the"));
-    inputOutputs.put("the{", Arrays.asList("the"));
-    inputOutputs.put("the}", Arrays.asList("the"));
-    inputOutputs.put("the:", Arrays.asList("the"));
-    inputOutputs.put("the;", Arrays.asList("the"));
-    inputOutputs.put("the)", Arrays.asList("the"));
-    inputOutputs.put("the(", Arrays.asList("the"));
+    inputOutputs.put("12.23 4567.89", Arrays.asList("12.23", "4567.89"));
+    inputOutputs.put("the.and", Arrays.asList("the", "and"));
+    inputOutputs.put("the,and", Arrays.asList("the", "and"));
+    inputOutputs.put("the”and", Arrays.asList("the", "and"));
+    inputOutputs.put("the“and", Arrays.asList("the", "and"));
+    inputOutputs.put("the?and", Arrays.asList("the", "and"));
+    inputOutputs.put("the[and", Arrays.asList("the", "and"));
+    inputOutputs.put("the]and", Arrays.asList("the", "and"));
+    inputOutputs.put("the'and", Arrays.asList("the", "and"));
+    inputOutputs.put("the{and", Arrays.asList("the", "and"));
+    inputOutputs.put("the}and", Arrays.asList("the", "and"));
+    inputOutputs.put("the:and", Arrays.asList("the", "and"));
+    inputOutputs.put("the;and", Arrays.asList("the", "and"));
+    inputOutputs.put("the)and", Arrays.asList("the", "and"));
+    inputOutputs.put("the(and", Arrays.asList("the", "and"));
     inputOutputs.put("new\nline", Arrays.asList("new", "line"));
     inputOutputs.put("some\ttabs", Arrays.asList("some", "tabs"));
-    inputOutputs.put("career.[12][13][c]", Arrays.asList("career1213c"));
+    inputOutputs.put("career.[12][13][c]", Arrays.asList("career", "12", "13", "c"));
 
     inputOutputs
         .keySet()
@@ -47,9 +47,9 @@ public class TermExtractorTest {
   @Test
   void testPositions() {
     List<String> input = Arrays.asList("The Quick quick brown fox", "jumps quick");
-    HashMap<String, List<Integer>> actual = TermExtractor.extract(input);
+    LinkedHashMap<String, List<Integer>> actual = TermExtractor.extract(input);
 
-    HashMap<String, List<Integer>> expected = new HashMap<>();
+    LinkedHashMap<String, List<Integer>> expected = new LinkedHashMap<>();
     expected.put("the", Arrays.asList(0));
     expected.put("quick", Arrays.asList(1, 2, 6));
     expected.put("brown", Arrays.asList(3));
