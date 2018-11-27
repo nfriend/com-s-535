@@ -28,53 +28,36 @@ public class QueryProcessor {
    * @return The top K documents
    */
   public List<String> topKDocs(String query, int k) {
-    List<String> result =
-        allDocs
-            .stream()
-            .map(
-                d -> {
-                  return new DocumentAndScore(d, pi.Relevance(query, d));
-                })
-            .sorted()
-            .limit(k)
-            .map(
-                ds -> {
-                  System.out.println(ds.toString());
-                  return ds.document;
-                })
-            .collect(Collectors.toList());
-
-    return result;
+    return allDocs
+        .stream()
+        .map(
+            d -> {
+              return new DocumentAndScores(d, pi.Relevance(query, d));
+            })
+        .sorted()
+        .limit(k)
+        .map(ds -> ds.document)
+        .collect(Collectors.toList());
   }
 
-  /** A container class that holds a document and its score */
-  class DocumentAndScore implements Comparable<DocumentAndScore> {
-
-    /** The document */
-    public String document;
-
-    /** The document's score */
-    public double score;
-
-    /**
-     * Constructs a new DocumentAndStore.
-     *
-     * @param document The document
-     * @param score The document's score
-     */
-    public DocumentAndScore(String document, double score) {
-      this.document = document;
-      this.score = score;
-    }
-
-    @Override
-    public int compareTo(DocumentAndScore other) {
-      return Double.compare(other.score, score);
-    }
-
-    @Override
-    public String toString() {
-      return "DocumentAndScore [document=" + document + ", score=" + score + "]";
-    }
+  /**
+   * Does the same thing as <tt>topKDocs</tt>, but returns the entire DocumentAndScore object for
+   * reporting purposes
+   *
+   * @param query The search query
+   * @param k The number of documents to retrieve
+   * @return The top K documents
+   */
+  public List<DocumentAndScores> topKDocsForReport(String query, int k) {
+    return allDocs
+        .stream()
+        .map(
+            d -> {
+              return new DocumentAndScores(
+                  d, pi.Relevance(query, d), pi.TPScore(query, d), pi.VSScore(query, d));
+            })
+        .sorted()
+        .limit(k)
+        .collect(Collectors.toList());
   }
 }
