@@ -238,4 +238,15 @@ public class PositionalIndex {
   public double Relevance(String query, String doc) {
     return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
   }
+
+  /**
+   * Returns the list of all documents indexed
+   *
+   * @return The list of all indexed documents
+   */
+  public List<String> getAllDocuments() {
+    List<String> allDocs = new ArrayList<String>(docVectors.keySet());
+    allDocs.sort(String::compareTo);
+    return allDocs;
+  }
 }
