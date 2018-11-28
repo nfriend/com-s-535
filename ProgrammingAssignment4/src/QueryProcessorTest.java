@@ -4,11 +4,20 @@ import org.junit.jupiter.api.Test;
 public class QueryProcessorTest {
   @Test
   void testQueryProcessor() {
-    String rootFolder = System.getProperty("user.dir") + "/src/test-input";
-    //    String rootFolder = "C:\\Users\\Nathan\\Downloads\\IR";
+    //    String rootFolder = System.getProperty("user.dir") + "/src/test-input";
+    String rootFolder = "C:\\Users\\Nathan\\Downloads\\IR";
     QueryProcessor qp = new QueryProcessor(rootFolder);
 
-    String[] queries = new String[] {"quick brown fox", "blue"};
+    Date start = new Date();
+
+    String[] queries =
+        new String[] {
+          "glove",
+          "biting slider",
+          "baseball rules",
+          "world series 1991",
+          "best pitcher of all time"
+        };
     int k = 10;
 
     for (String query : queries) {
@@ -20,5 +29,13 @@ public class QueryProcessorTest {
       }
       System.out.println("\n");
     }
+
+    Date end = new Date();
+    Logger.log(
+        "Done performing "
+            + queries.length
+            + " searches after "
+            + ((end.getTime() - start.getTime()) / 1000)
+            + " seconds");
   }
 }

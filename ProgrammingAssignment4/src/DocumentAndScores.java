@@ -52,15 +52,15 @@ public class DocumentAndScores implements Comparable<DocumentAndScores> {
    * @return A header string
    */
   public static String getTableHeader() {
-    return String.format("%-20s %8s %8s %16s", "Document", "TPScore", "VSScore", "Relevance Score")
-        + "\n-------------------------------------------------------";
+    return String.format("%-60s %8s %8s %16s", "Document", "TPScore", "VSScore", "Relevance Score")
+        + "\n-----------------------------------------------------------------------------------------------";
   }
 
   @Override
   public String toString() {
     DecimalFormat df = new DecimalFormat("#0.00000");
     return String.format(
-        "%-20s %8s %8s %16s",
-        document, df.format(tpScore), df.format(tpScore), df.format(vsmScore));
+        "%-60s %8s %8s %16s",
+        document, df.format(tpScore), df.format(vsmScore), df.format(relevance));
   }
 }

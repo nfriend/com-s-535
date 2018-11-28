@@ -8,7 +8,7 @@ public class PositionalIndex {
   private Map<String, Map<String, List<Integer>>> index = new HashMap<>();
 
   /** The vector-space model */
-  private Map<String, double[]> docVectors = new HashMap<>();
+  private Map<String, float[]> docVectors = new HashMap<>();
 
   /** The set of all terms in all documents */
   private List<String> allTerms = new ArrayList<>();
@@ -73,14 +73,14 @@ public class PositionalIndex {
     allTerms = new ArrayList<>(index.keySet());
     allTerms.sort(String::compareTo);
 
-    // compute the vector space model
+    // compute the vector space model in parallel
     Logger.log("Computing the vector space model");
 
     docVectors
         .keySet()
+        .parallelStream()
         .forEach(
             doc -> {
-
               // build the map of terms that appear in the current document (and their positions)
               HashMap<String, List<Integer>> docTerms = new HashMap<>();
               allTerms.forEach(
@@ -90,7 +90,12 @@ public class PositionalIndex {
                     }
                   });
 
-              docVectors.put(doc, VSMScore.getVector(index, allTerms, docTerms, docVectors.size()));
+              float[] vector = VSMScore.getVector(index, allTerms, docTerms, docVectors.size());
+
+              synchronized (this) {
+                Logger.log("Building vector for " + doc);
+                docVectors.put(doc, vector);
+              }
             });
 
     Date end = new Date();
@@ -215,15 +220,15 @@ public class PositionalIndex {
    * @param doc The document to test
    * @return The VSScode of the query with respect to the document
    */
-  public double VSScore(String query, String doc) {
+  public float VSScore(String query, String doc) {
 
     if (!docVectors.containsKey(doc)) {
       return 0;
     }
 
     LinkedHashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
-    double[] queryVector = VSMScore.getVector(index, allTerms, queryTerms, docVectors.size());
-    double[] docVector = docVectors.get(doc);
+    float[] queryVector = VSMScore.getVector(index, allTerms, queryTerms, docVectors.size());
+    float[] docVector = docVectors.get(doc);
 
     return VSMScore.cosSim(queryVector, docVector);
   }

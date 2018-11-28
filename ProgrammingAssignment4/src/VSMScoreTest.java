@@ -45,28 +45,28 @@ public class VSMScoreTest {
               }
             });
 
-    double[] actual, expected;
+    float[] actual, expected;
 
     actual = VSMScore.getVector(index, allTerms, doc1Terms, docCount);
-    expected = new double[] {0.304999, 0, 0, 0.304999};
-    assertArrayEquals(expected, actual, 0.00001);
+    expected = new float[] {0.304999f, 0, 0, 0.304999f};
+    assertArrayEquals(expected, actual, 0.00001f);
 
     actual = VSMScore.getVector(index, allTerms, doc2Terms, docCount);
-    expected = new double[] {0.249030, 0.477121, 0, 0.352182};
-    assertArrayEquals(expected, actual, 0.00001);
+    expected = new float[] {0.249030f, 0.477121f, 0, 0.352182f};
+    assertArrayEquals(expected, actual, 0.00001f);
 
     actual = VSMScore.getVector(index, allTerms, doc3Terms, docCount);
-    expected = new double[] {0, 0, 0.674751, 0};
-    assertArrayEquals(expected, actual, 0.00001);
+    expected = new float[] {0, 0, 0.674751f, 0};
+    assertArrayEquals(expected, actual, 0.00001f);
   }
 
   @Test
   void testCosSim() {
-    double[] vector1 = new double[] {1, 2, 3};
-    double[] vector2 = new double[] {4, 5, 6};
+    float[] vector1 = new float[] {1, 2, 3};
+    float[] vector2 = new float[] {4, 5, 6};
 
-    double expected = 0.974631;
-    double actual = VSMScore.cosSim(vector1, vector2);
+    float expected = 0.974631f;
+    float actual = VSMScore.cosSim(vector1, vector2);
 
     assertEquals(expected, actual, 0.00001);
   }
