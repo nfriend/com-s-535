@@ -13,9 +13,9 @@ public class QueryProcessorTest {
     String[] queries =
         new String[] {
           "glove",
-          "biting slider",
           "baseball rules",
           "world series 1991",
+          "home runs world record",
           "best pitcher of all time"
         };
     int k = 10;
