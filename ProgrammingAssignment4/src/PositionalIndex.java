@@ -14,6 +14,12 @@ public class PositionalIndex {
   private List<String> allTerms = new ArrayList<>();
 
   /**
+   * A cache of query vectors, so that we don't have to recompute the query vector for every
+   * document comparison
+   */
+  private Map<String, float[]> queryVectors = new HashMap<>();
+
+  /**
    * Creates a new PositionalIndex instance
    *
    * @param rootFolder The folder containing the documents to index
@@ -226,8 +232,12 @@ public class PositionalIndex {
       return 0;
     }
 
-    LinkedHashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
-    float[] queryVector = VSMScore.getVector(index, allTerms, queryTerms, docVectors.size());
+    if (!queryVectors.containsKey(query)) {
+      LinkedHashMap<String, List<Integer>> queryTerms = TermExtractor.extract(query);
+      queryVectors.put(query, VSMScore.getVector(index, allTerms, queryTerms, docVectors.size()));
+    }
+
+    float[] queryVector = queryVectors.get(query);
     float[] docVector = docVectors.get(doc);
 
     return VSMScore.cosSim(queryVector, docVector);

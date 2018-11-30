@@ -16,6 +16,7 @@ public class VSMScore {
       List<String> allTerms,
       Map<String, List<Integer>> docTerms,
       int docCount) {
+
     float[] vector = new float[allTerms.size()];
 
     for (int i = 0; i < allTerms.size(); i++) {
@@ -47,6 +48,7 @@ public class VSMScore {
    * @return The cosine similarity
    */
   public static float cosSim(float[] vector1, float[] vector2) {
+
     if (vector1.length != vector2.length) {
       throw new IllegalArgumentException(
           "Vectors must have the same dimensionality to compute cosine similarity");
