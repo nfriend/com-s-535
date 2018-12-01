@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class PositionalIndex {
@@ -17,7 +18,7 @@ public class PositionalIndex {
    * A cache of query vectors, so that we don't have to recompute the query vector for every
    * document comparison
    */
-  private Map<String, float[]> queryVectors = new HashMap<>();
+  private Map<String, float[]> queryVectors = new ConcurrentHashMap<>();
 
   /**
    * Creates a new PositionalIndex instance

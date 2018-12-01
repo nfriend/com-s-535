@@ -29,7 +29,7 @@ public class QueryProcessor {
    */
   public List<String> topKDocs(String query, int k) {
     return allDocs
-        .stream()
+        .parallelStream()
         .map(
             d -> {
               return new DocumentAndScores(d, pi.Relevance(query, d));
@@ -50,7 +50,7 @@ public class QueryProcessor {
    */
   public List<DocumentAndScores> topKDocsForReport(String query, int k) {
     return allDocs
-        .stream()
+        .parallelStream()
         .map(
             d -> {
               return new DocumentAndScores(
