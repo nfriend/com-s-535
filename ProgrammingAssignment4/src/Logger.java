@@ -5,7 +5,7 @@ import java.util.Date;
 public class Logger {
 
   /** Whether or not logging is enabled */
-  public static boolean isLoggingEnabled = true;
+  public static boolean isLoggingEnabled = false;
 
   /** Date format for log messages */
   private static SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
